@@ -1,0 +1,56 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Módulo de Inventario - TrackIt</title>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+</head>
+<body>
+    <div class="container contenedor-modulo">
+        <div class="cabecera-login">
+            <h1>TrackIt</h1>
+            <h2>Módulo de Gestión de Inventario</h2>
+        </div>
+
+        {% if messages %}
+            <div class="mensajes-alerta">
+                {% for message in messages %}
+                    <p class="alerta-exito">{{ message }}</p>
+                {% endfor %}
+            </div>
+        {% endif %}
+        
+        <div class="objetos panel-control">
+            <h3>Panel de Control de Inventario</h3>
+            <p class="texto-descripcion">Selecciona la operación que deseas realizar en el sistema:</p>
+            
+            <div class="contenedor-tarjetas">
+                <a href="{% url 'registrar_producto' %}" class="btn tarjeta-opcion">
+                    🐾 <strong>Crear Producto</strong><br>
+                    <span class="subtexto-tarjeta">Registrar producto y stock inicial</span>
+                </a>
+                <a href="{% url 'consultar_producto' %}" class="btn btn-principal btn-modulo">
+                🔍 Consulta de Producto y Existencias
+            </a>
+
+                <a href="{% url 'registrar_inventario' %}" class="btn tarjeta-opcion">
+                    📊 <strong>Ajuste de Inventario</strong><br>
+                    <span class="subtexto-tarjeta">Cargar o descargar con costo y detalle</span>
+                </a>
+                
+                <a href="{% url 'registrar_traslado' %}" class="btn tarjeta-opcion">
+                    🔄 <strong>Traslado de Inventario</strong><br>
+                    <span class="subtexto-tarjeta">Mover artículos entre ubicaciones</span>
+                </a>
+            </div>
+        </div>
+
+        <div class="contenedor-volver">
+            <a href="{% url 'dashboard' %}" class="btn boton-volver">
+                Volver al Menú Principal
+            </a>
+        </div>
+    </div>
+</body>
+</html>

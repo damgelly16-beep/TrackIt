@@ -1,0 +1,235 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Factura de Venta - TrackIt</title>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+</head>
+<body>
+    <div class="container">
+        <div class="cabecera-login">
+            <h1>TrackIt</h1>
+            <h2>Emisión de Factura</h2>
+            <p>Complete los datos del cliente y agregue los productos a facturar.</p>
+        </div>
+
+        {% if messages %}
+            <div class="mensajes-alerta">
+                {% for message in messages %}
+                    <p class="alerta-exito">{{ message }}</p>
+                {% endfor %}
+            </div>
+        {% endif %}
+        
+        <form method="post" id="formVenta" novalidate class="form-registro">
+            {% csrf_token %}
+            <input type="hidden" name="detallesProductosJson" id="detallesProductosJson" value="[]">
+            
+            <fieldset class="grupo-fieldset">
+                <legend class="leyenda-fieldset">Datos del Cliente y Factura</legend>
+                
+                <div class="objetos">
+                    <label for="{{ form.numeroFactura.id_for_label }}">{{ form.numeroFactura.label }}</label>
+                    {{ form.numeroFactura }}
+                </div>
+                
+                <div class="fila-doble">
+                    <div class="objetos objeto-mitad">
+                        <label for="{{ form.clienteNombre.id_for_label }}">{{ form.clienteNombre.label }}</label>
+                        {{ form.clienteNombre }}
+                    </div>
+
+                    <div class="objetos objeto-mitad">
+                        <label for="{{ form.clienteCedula.id_for_label }}">{{ form.clienteCedula.label }}</label>
+                        {{ form.clienteCedula }}
+                    </div>
+                </div>
+
+                <div class="objetos">
+                    <label for="{{ form.metodoPago.id_for_label }}">{{ form.metodoPago.label }}</label>
+                    {{ form.metodoPago }}
+                </div>
+            </fieldset>
+
+            <fieldset class="grupo-fieldset">
+                <legend class="leyenda-fieldset">Agregar Productos a Facturar</legend>
+
+                <div class="objetos">
+                    <label for="txtBuscarCodigoNombre">🔍 Escanear o Buscar (Presione Enter):</label>
+                    <input class="TxtCaja" id="txtBuscarCodigoNombre" type="text" placeholder="Código de barras o descripción..." autofocus onkeyup="filtrarYSeleccionarProducto(event)" />
+                </div>
+                
+                <div class="objetos">
+                    <label for="tempProducto">Producto Seleccionado</label>
+                    <select class="TxtCaja" id="tempProducto" onchange="actualizarPrecio()">
+                        <option value="" data-precio="0" data-stock="0">-- Seleccione un producto --</option>
+                        {% for prod in productos %}
+                            <option value="{{ prod.pk }}" data-precio="{{ prod.precio }}" data-stock="{{ prod.stock }}">
+                                [ID: {{ prod.pk }}] {{ prod.nombreproducto }} (Disp: {{ prod.stock }})
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="fila-doble">
+                    <div class="objetos objeto-mitad">
+                        <label for="tempCantidad">Cantidad</label>
+                        <input class="TxtCaja" id="tempCantidad" type="number" step="0.01" placeholder="0.00" />
+                    </div>
+
+                    <div class="objetos objeto-mitad">
+                        <label for="tempPrecio">Precio Und.</label>
+                        <input class="TxtCaja" id="tempPrecio" type="number" step="0.01" placeholder="0.00" readonly style="background-color: #f1f1f1; cursor: not-allowed;" />
+                    </div>
+                </div>
+
+                <button class="btn btn-principal" type="button" onclick="agregarProductoVenta()" style="margin-top: 10px;">
+                    ➕ Agregar Producto
+                </button>
+            </fieldset>
+
+            <fieldset class="grupo-fieldset">
+                <legend class="leyenda-fieldset">Resumen de Venta</legend>
+                
+                <div class="contenedor-tabla-resumen">
+                    <table class="tabla-detalle-entrada">
+                        <thead>
+                            <tr>
+                                <th>Cod</th>
+                                <th>Producto</th>
+                                <th>Cant.</th>
+                                <th>Precio</th>
+                                <th>Subtotal</th>
+                                <th>X</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tablaVentaBody">
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="resumen-totales-factura" style="margin-top: 15px; text-align: right; font-size: 1.2em;">
+                    <p class="total-destacado"><strong>Total a Pagar:</strong> $<span id="lblTotalVenta">0.00</span></p>
+                </div>
+            </fieldset>
+
+            <div class="fila-doble">
+                <div class="objetos objeto-mitad">
+                    <button class="btn btn-principal" type="submit">Emitir Factura</button>
+                </div>
+                <div class="objetos objeto-mitad">
+                    <a href="{% url 'ventas_modulo' %}" class="btn btn-secundario">Cancelar</a>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        let itemsVenta = [];
+
+        function filtrarYSeleccionarProducto(e) {
+            const texto = document.getElementById('txtBuscarCodigoNombre').value.trim().toLowerCase();
+            const select = document.getElementById('tempProducto');
+            const opciones = select.options;
+
+            if (texto === "") return;
+
+            let encontrado = false;
+            for (let i = 0; i < opciones.length; i++) {
+                const opt = opciones[i];
+                const idProd = opt.value.toLowerCase();
+                const nombreProd = opt.text.toLowerCase();
+
+                if (idProd === texto || nombreProd.includes(texto)) {
+                    select.selectedIndex = i;
+                    actualizarPrecio();
+                    encontrado = true;
+                    break;
+                }
+            }
+
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                if (encontrado && select.value !== "") {
+                    document.getElementById('tempCantidad').focus();
+                }
+            }
+        }
+
+        function actualizarPrecio() {
+            const selectProd = document.getElementById('tempProducto');
+            const opcionSeleccionada = selectProd.options[selectProd.selectedIndex];
+            const precio = opcionSeleccionada.getAttribute('data-precio') || 0;
+            document.getElementById('tempPrecio').value = parseFloat(precio).toFixed(2);
+        }
+
+        function agregarProductoVenta() {
+            const selectProd = document.getElementById('tempProducto');
+            const prodId = selectProd.value;
+            const prodNombre = selectProd.options[selectProd.selectedIndex].text;
+            const cantidad = document.getElementById('tempCantidad').value;
+            const precio = document.getElementById('tempPrecio').value;
+
+            if (!prodId || !cantidad || parseFloat(cantidad) <= 0 || !precio) {
+                alert('Faltan datos o cantidad inválida.');
+                return;
+            }
+
+            itemsVenta.push({
+                productoId: prodId,
+                nombre: prodNombre,
+                cantidad: parseFloat(cantidad),
+                precio: parseFloat(precio)
+            });
+
+            document.getElementById('txtBuscarCodigoNombre').value = '';
+            document.getElementById('tempProducto').value = '';
+            document.getElementById('tempCantidad').value = '';
+            document.getElementById('tempPrecio').value = '';
+            document.getElementById('txtBuscarCodigoNombre').focus();
+
+            renderTablaVenta();
+        }
+
+        function eliminarProductoVenta(index) {
+            itemsVenta.splice(index, 1);
+            renderTablaVenta();
+        }
+
+        function renderTablaVenta() {
+            const tbody = document.getElementById('tablaVentaBody');
+            tbody.innerHTML = '';
+            let totalVenta = 0;
+
+            itemsVenta.forEach((item, index) => {
+                const subtotalItem = item.cantidad * item.precio;
+                totalVenta += subtotalItem;
+
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${item.productoId}</td>
+                    <td>${item.nombre}</td>
+                    <td>${item.cantidad}</td>
+                    <td>$${item.precio.toFixed(2)}</td>
+                    <td>$${subtotalItem.toFixed(2)}</td>
+                    <td>
+                        <button type="button" class="btn-eliminar-fila" onclick="eliminarProductoVenta(${index})">X</button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+            document.getElementById('lblTotalVenta').innerText = totalVenta.toFixed(2);
+            document.getElementById('detallesProductosJson').value = JSON.stringify(itemsVenta);
+        }
+
+        document.getElementById('formVenta').addEventListener('submit', function(e) {
+            if (itemsVenta.length === 0) {
+                e.preventDefault();
+                alert('No ha agregado productos a la venta.');
+            }
+        });
+    </script>
+</body>
+</html>

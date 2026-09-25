@@ -1,0 +1,94 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Editar Usuario - TrackIt</title>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+</head>
+<body>
+    <div class="container contenedor-amplio">
+        <div class="cabecera-login">
+            <h1>TrackIt</h1>
+            <h2>Módulo de Administración</h2>
+            <h3>Edición de Datos de Usuario</h3>
+        </div>
+
+        {% if messages %}
+            <div class="mensajes-alerta">
+                {% for message in messages %}
+                    <p class="alerta-exito">{{ message }}</p>
+                {% endfor %}
+            </div>
+        {% endif %}
+        
+        <form method="post" novalidate>
+            {% csrf_token %}
+            
+            <fieldset class="grupo-fieldset">
+                <legend class="leyenda-fieldset">Información Básica</legend>
+                
+                <div class="fila-doble">
+                    <div class="objetos objeto-mitad">
+                        <label>Documento de Identidad</label>
+                        <input class="TxtCaja" type="text" value="{{ usuario.tipodocumento }} - {{ usuario.numcedula }}" disabled />
+                    </div>
+
+                    <div class="objetos objeto-mitad">
+                        <label for="{{ form.fk_codrol.id_for_label }}">{{ form.fk_codrol.label }}</label>
+                        {{ form.fk_codrol }}
+                    </div>
+                </div>
+
+                <div class="fila-doble">
+                    <div class="objetos objeto-mitad">
+                        <label for="{{ form.nombreusuario1.id_for_label }}">{{ form.nombreusuario1.label }}</label>
+                        {{ form.nombreusuario1 }}
+                    </div>
+
+                    <div class="objetos objeto-mitad">
+                        <label for="{{ form.nombreusuario2.id_for_label }}">{{ form.nombreusuario2.label }}</label>
+                        {{ form.nombreusuario2 }}
+                    </div>
+                </div>
+
+                <div class="fila-doble">
+                    <div class="objetos objeto-mitad">
+                        <label for="{{ form.apellidousuario1.id_for_label }}">{{ form.apellidousuario1.label }}</label>
+                        {{ form.apellidousuario1 }}
+                    </div>
+
+                    <div class="objetos objeto-mitad">
+                        <label for="{{ form.apellidousuario2.id_for_label }}">{{ form.apellidousuario2.label }}</label>
+                        {{ form.apellidousuario2 }}
+                    </div>
+                </div>
+            </fieldset>
+
+            <fieldset class="grupo-fieldset">
+                <legend class="leyenda-fieldset">Contacto y Ubicación</legend>
+
+                <div class="fila-doble">
+                    <div class="objetos objeto-mitad">
+                        <label for="{{ form.telefonousuario.id_for_label }}">{{ form.telefonousuario.label }}</label>
+                        {{ form.telefonousuario }}
+                    </div>
+
+                    <div class="objetos objeto-mitad">
+                        <label for="{{ form.emailusuario.id_for_label }}">{{ form.emailusuario.label }}</label>
+                        {{ form.emailusuario }}
+                    </div>
+                </div>
+
+                <div class="objetos sin-margen">
+                    <label for="{{ form.direccionusuario.id_for_label }}">{{ form.direccionusuario.label }}</label>
+                    {{ form.direccionusuario }}
+                </div>
+            </fieldset>
+
+            <button class="btn btn-principal" type="submit">Guardar Cambios</button>
+            <a href="{% url 'lista_usuarios' %}" class="btn btn-secundario">Cancelar</a>
+        </form>
+    </div>
+</body>
+</html>

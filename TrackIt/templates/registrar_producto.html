@@ -1,0 +1,81 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Crear Producto - TrackIt</title>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+</head>
+<body>
+    <div class="container contenedor-amplio">
+        <div class="cabecera-login">
+            <h1>TrackIt</h1>
+            <h2>Módulo de Inventario</h2>
+            <h3>Crear Nuevo Producto</h3>
+        </div>
+
+        {% if messages %}
+            <div class="mensajes-alerta">
+                {% for message in messages %}
+                    <p class="alerta-exito">{{ message }}</p>
+                {% endfor %}
+            </div>
+        {% endif %}
+        
+        <form method="post" novalidate>
+            {% csrf_token %}
+            
+            <fieldset class="grupo-fieldset">
+                <legend class="leyenda-fieldset">1. Información del Producto</legend>
+                
+                <div class="objetos">
+                    <label for="{{ form.nombreproducto.id_for_label }}">{{ form.nombreproducto.label }}</label>
+                    {{ form.nombreproducto }}
+                </div>
+
+                <div class="objetos">
+                    <label for="{{ form.descripcionproducto.id_for_label }}">{{ form.descripcionproducto.label }}</label>
+                    {{ form.descripcionproducto }}
+                </div>
+
+                <div class="objetos">
+                    <label for="{{ form.fk_codgrupos.id_for_label }}">{{ form.fk_codgrupos.label }}</label>
+                    {{ form.fk_codgrupos }}
+                </div>
+
+                <div class="objetos caja-secundaria">
+                    <label for="{{ form.nuevo_grupo_nombre.id_for_label }}" class="label-pequeno">{{ form.nuevo_grupo_nombre.label }}</label>
+                    {{ form.nuevo_grupo_nombre }}
+                </div>
+            </fieldset>
+
+            <fieldset class="grupo-fieldset">
+                <legend class="leyenda-fieldset">2. Control de Stock y Precios</legend>
+
+                <div class="objetos">
+                    <label for="{{ form.unid_medida.id_for_label }}">{{ form.unid_medida.label }}</label>
+                    {{ form.unid_medida }}
+                </div>
+
+                <div class="objetos">
+                    <label for="{{ form.precio_producto.id_for_label }}">{{ form.precio_producto.label }}</label>
+                    {{ form.precio_producto }}
+                </div>
+
+                <div class="objetos">
+                    <label for="{{ form.lote.id_for_label }}">{{ form.lote.label }}</label>
+                    {{ form.lote }}
+                </div>
+
+                <div class="objetos sin-margen">
+                    <label for="{{ form.fecha_vencimiento.id_for_label }}">{{ form.fecha_vencimiento.label }}</label>
+                    {{ form.fecha_vencimiento }}
+                </div>
+            </fieldset>
+
+            <button class="btn btn-principal" type="submit">Guardar Producto</button>
+            <a href="{% url 'inventario_modulo' %}" class="btn btn-secundario">Volver al Módulo</a>
+        </form>
+    </div>
+</body>
+</html>

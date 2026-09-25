@@ -1,0 +1,99 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TrackIt - Gestión de Inventario Profesional</title>
+    <!-- Fuente profesional de Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}"> 
+</head>
+<body>
+    
+    <!-- Encabezado / Navegación -->
+    <header class="menu-principal">
+        <div class="logo-box">
+            <h1>TrackIt.</h1>
+        </div>
+        <nav>
+        <ul class="enlaces-menu">
+              <li><a href="#inicio">Inicio</a></li>
+                <li><a href="#caracteristicas">Características</a></li>
+                 <li><a href="#contacto">Contacto</a></li>
+                <li><a href="/Login/" class="btn btn-menu">Iniciar Sesión</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+           <section class="hero-section" id="inicio">
+            <div class="hero-texto">
+                <span class="badge">Nuevo Sistema 2026</span>
+              <h2>Control total de tu stock en tiempo real.</h2>
+                <p>El sistema de gestión exclusivo para clínicas y centros veterinarios. Rastrea insumos, gestiona entradas y salidas, y toma decisiones inteligentes con máxima precisión.</p>
+                <div class="hero-botones">
+                 <a href="{% url 'login' %}" class="btn">Ingresar al Sistema</a>
+                 <a href="#contacto" class="btn btn-outline">Solicitar Demo</a>
+                </div>
+            </div>
+            <div class="hero-imagen">
+                <img src="{% static 'img/LOGO.png' %}" alt="Logo TrackIt">
+            </div>
+        </section>
+        <section id="caracteristicas" class="seccion-features">
+            <div class="titulo-seccion">
+                <h3>Diseñado para la excelencia</h3>
+                <p>Herramientas creadas para optimizar el flujo de trabajo y garantizar trazabilidad.</p>
+            </div>
+            
+    <div class="grid-caracteristicas">
+         <div class="tarjeta-feature">
+                <div class="feature-icon">🔒</div>
+               <h4>Acceso Seguro</h4>
+                    <p>Cuentas gestionadas internamente con diferentes niveles de permisos para tu personal.</p>
+     </div>
+        <div class="tarjeta-feature">
+            <div class="feature-icon">📍</div>
+            <h4>Rastreo al Instante</h4>
+            <p>Mantén visibilidad 24/7 de tus operaciones y medicamentos con alertas de stock bajo.</p>
+             </div>
+                <div class="tarjeta-feature">
+               <div class="feature-icon">📊</div>
+          <h4>Reportes Exactos</h4>
+           <p>Genera analíticas detalladas y mantén el control exacto financiero y de existencias.</p>
+                </div>
+            </div>
+        </section>
+        <section id="contacto" class="seccion-contacto">
+            <div class="container container-contacto">
+         <div class="cabecera-contacto">
+            <h2>¿Quieres ver TrackIt en acción?</h2>
+                    <p>Déjanos tus datos y agendaremos una demostración.</p>
+                </div>
+                <form action="#" method="post">
+                    <div class="form-group">
+              <label for="TxtNombreContacto">Nombre completo</label>
+            <input class="TxtCaja" id="TxtNombreContacto" type="text" placeholder="Ej. Carlos Mendoza" required />
+        </div>
+     <div class="form-group">
+                   <label for="TxtEmpresa">Centro o Clínica</label>
+              <input class="TxtCaja" id="TxtEmpresa" type="text" placeholder="Ej. Clínica Veterinaria Cali" required />
+           </div>
+                    <div class="form-group">
+                        <label for="TxtEmailContacto">Correo electrónico</label>
+                        <input class="TxtCaja" id="TxtEmailContacto" type="email" placeholder="correo@ejemplo.com" required />
+                    </div>
+                    <button class="btn btn-block" type="submit">Agendar Demostración</button>
+                </form>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="footer-contenido">
+            <h3>TrackIt</h3>
+                </div>
+    </footer>
+
+</body>
+</html>

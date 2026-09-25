@@ -1,0 +1,45 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login TrackIt</title>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+</head>
+<body>
+    <div class="container" id="container">
+        <div class="cabecera-login">
+            <h1>TrackIt</h1>
+            <h2>Sistema de gestión de Inventario</h2>
+            <h3>Ingreso</h3>
+        </div>
+
+        {% if messages %}
+            <div class="mensajes-alerta" style="margin-bottom: 15px;">
+                {% for message in messages %}
+                    <p class="alerta-exito" style="color: red; background-color: #ffe6e6;">{{ message }}</p>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <form id="login" method="post" novalidate>
+            {% csrf_token %}
+            
+            <div class="objetos">
+                <label for="{{ form.TxtUsuario.id_for_label }}">{{ form.TxtUsuario.label }}</label>
+                {{ form.TxtUsuario }}
+            </div>
+
+            <div class="objetos">
+                <label for="{{ form.TxtPassword.id_for_label }}">{{ form.TxtPassword.label }}</label>
+                {{ form.TxtPassword }}
+            </div>
+
+            <button class="btn" type="submit" style="width: 100%; margin-top: 20px;">Iniciar Sesión</button>
+        </form>
+    </div>                
+
+    <footer></footer>
+</body>
+</html>

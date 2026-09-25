@@ -1,0 +1,82 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Historial de Compras - TrackIt</title>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+</head>
+<body>
+    <div class="container">
+        <div class="cabecera-login">
+            <h1>TrackIt</h1>
+            <h2>Historial de Compras</h2>
+            <p>Listado de ingresos de mercancía por proveedor</p>
+        </div>
+
+        <!-- formulario para buscar compras -->
+        <form method="get" class="form-registro">
+            <fieldset class="grupo-fieldset">
+                <legend class="leyenda-fieldset">Filtros de Búsqueda</legend>
+                
+                <div class="fila-doble">
+                    <div class="objetos objeto-mitad">
+                        <label for="busquedaProveedor">Proveedor</label>
+                        <input class="TxtCaja" id="busquedaProveedor" name="busquedaProveedor" type="text" value="{{ busqueda_proveedor }}" placeholder="Ej: Distribuidora..." />
+                    </div>
+
+                    <div class="objetos objeto-mitad">
+                        <label for="busquedaProducto">Producto</label>
+                        <input class="TxtCaja" id="busquedaProducto" name="busquedaProducto" type="text" value="{{ busqueda_producto }}" placeholder="Ej: Amoxicilina..." />
+                    </div>
+                </div>
+
+                <div class="objetos" style="margin-top: 10px;">
+                    <button class="btn btn-principal" type="submit">Buscar</button>
+                    <a href="{% url 'historial_compras' %}" class="btn btn-secundario">Limpiar Filtros</a>
+                </div>
+            </fieldset>
+        </form>
+
+        <!-- aca muestro la tabla con los resultados -->
+        <fieldset class="grupo-fieldset">
+            <legend class="leyenda-fieldset">Entradas Registradas</legend>
+            
+            <div class="contenedor-tabla-resumen">
+                <table class="tabla-detalle-entrada">
+                    <thead>
+                        <tr>
+                            <th>Factura</th>
+                            <th>Proveedor</th>
+                            <th>Producto</th>
+                            <th>Fecha</th>
+                            <th>Cant.</th>
+                            <th>Costo Und.</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in historial %}
+                            <tr>
+                             <td>{{ item.num_documento }}</td>
+                            <td>{{ item.proveedor }}</td>
+                            <td>{{ item.producto|default:"N/A" }}</td>
+                            <td>{{ item.fecha }}</td>
+                            <td>{{ item.cantidad }}</td>
+                            <td>${{ item.costo }}</td>
+                            </tr>
+                        {% empty %}
+                            <tr>
+                            <td colspan="6" class="texto-vacio">No hay compras registradas con esos datos.</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </fieldset>
+
+        <div class="contenedor-volver">
+            <a href="{% url 'compras_modulo' %}" class="btn btn-secundario">Cancelar / Volver</a>
+        </div>
+    </div>
+</body>
+</html>

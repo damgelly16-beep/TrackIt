@@ -1,0 +1,63 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Ajuste de Inventario - TrackIt</title>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+</head>
+<body>
+    <div class="container contenedor-amplio">
+        <div class="cabecera-login">
+            <h1>TrackIt</h1>
+            <h2>Módulo de Inventario</h2>
+            <h3>Ajuste de Mercancía (Cargue / Descargue)</h3>
+        </div>
+
+        {% if messages %}
+            <div class="mensajes-alerta">
+                {% for message in messages %}
+                    <p class="alerta-exito">{{ message }}</p>
+                {% endfor %}
+            </div>
+        {% endif %}
+        
+        <form method="post" novalidate>
+            {% csrf_token %}
+            
+            <fieldset class="grupo-fieldset">
+                <legend class="leyenda-fieldset">Detalles del Movimiento</legend>
+                
+                <div class="objetos">
+                    <label for="{{ form.productoId.id_for_label }}">{{ form.productoId.label }}</label>
+                    {{ form.productoId }}
+                </div>
+
+                <div class="objetos">
+                    <label for="{{ form.tipoAjuste.id_for_label }}">{{ form.tipoAjuste.label }}</label>
+                    {{ form.tipoAjuste }}
+                </div>
+
+                <div class="fila-doble">
+                    <div class="objetos objeto-mitad">
+                        <label for="{{ form.cantidadAjuste.id_for_label }}">{{ form.cantidadAjuste.label }}</label>
+                        {{ form.cantidadAjuste }}
+                    </div>
+                    <div class="objetos objeto-mitad">
+                        <label for="{{ form.costoAjuste.id_for_label }}">{{ form.costoAjuste.label }}</label>
+                        {{ form.costoAjuste }}
+                    </div>
+                </div>
+
+                <div class="objetos sin-margen">
+                    <label for="{{ form.detalleAjuste.id_for_label }}">{{ form.detalleAjuste.label }}</label>
+                    {{ form.detalleAjuste }}
+                </div>
+            </fieldset>
+
+            <button class="btn btn-principal" type="submit">Guardar Ajuste</button>
+            <a href="{% url 'inventario_modulo' %}" class="btn btn-secundario">Volver al Módulo</a>
+        </form>
+    </div>
+</body>
+</html>

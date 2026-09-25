@@ -1,0 +1,107 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro TrackIt</title>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+</head>
+<body>
+    <div class="container" id="container" style="max-width: 600px;"> 
+        <div class="cabecera-login">
+            <h1>TrackIt</h1>
+            <h2>Sistema de gestión de Inventario</h2>
+            <h3>Registro de Usuario</h3>
+        </div>
+        
+        <form method="post" novalidate>
+            {% csrf_token %}
+
+            {% if messages %}
+            <div class="objetos" style="margin-bottom: 15px;">
+                <ul>
+                    {% for message in messages %}
+                        <li style="list-style: none; color: {% if message.tags == 'success' %}green{% else %}red{% endif %}; font-weight: bold;">
+                            {{ message }}
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+            
+            <div class="objetos">
+                <label for="{{ form.username.id_for_label }}">{{ form.username.label }}</label>
+                {{ form.username }}
+            </div>
+
+            <div class="objetos">
+                <label for="{{ form.fk_codrol.id_for_label }}">{{ form.fk_codrol.label }}</label>
+                {{ form.fk_codrol }}
+            </div>
+
+            <div class="objetos">
+                <label for="{{ form.emailusuario.id_for_label }}">{{ form.emailusuario.label }}</label>
+                {{ form.emailusuario }}
+            </div>
+
+            <div style="display: flex; gap: 15px; margin-bottom: 15px;">
+                <div class="objetos" style="flex: 1; margin-bottom: 0;">
+                    <label for="{{ form.tipodocumento.id_for_label }}">{{ form.tipodocumento.label }}</label>
+                    {{ form.tipodocumento }}
+                </div>
+                <div class="objetos" style="flex: 2; margin-bottom: 0;">
+                    <label for="{{ form.numcedula.id_for_label }}">{{ form.numcedula.label }}</label>
+                    {{ form.numcedula }}
+                </div>
+            </div>
+
+            <div style="display: flex; gap: 15px; margin-bottom: 15px;">
+                <div class="objetos" style="flex: 1; margin-bottom: 0;">
+                    <label for="{{ form.nombreusuario1.id_for_label }}">{{ form.nombreusuario1.label }}</label>
+                    {{ form.nombreusuario1 }}
+                </div>
+                <div class="objetos" style="flex: 1; margin-bottom: 0;">
+                    <label for="{{ form.nombreusuario2.id_for_label }}">{{ form.nombreusuario2.label }}</label>
+                    {{ form.nombreusuario2 }}
+                </div>
+            </div>
+
+            <div style="display: flex; gap: 15px; margin-bottom: 15px;">
+                <div class="objetos" style="flex: 1; margin-bottom: 0;">
+                    <label for="{{ form.apellidousuario1.id_for_label }}">{{ form.apellidousuario1.label }}</label>
+                    {{ form.apellidousuario1 }}
+                </div>
+                <div class="objetos" style="flex: 1; margin-bottom: 0;">
+                    <label for="{{ form.apellidousuario2.id_for_label }}">{{ form.apellidousuario2.label }}</label>
+                    {{ form.apellidousuario2 }}
+                </div>
+            </div>
+
+            <div class="objetos">
+                <label for="{{ form.direccionusuario.id_for_label }}">{{ form.direccionusuario.label }}</label>
+                {{ form.direccionusuario }}
+            </div>
+
+            <div style="display: flex; gap: 15px; margin-bottom: 15px;">
+                <div class="objetos" style="flex: 1; margin-bottom: 0;">
+                    <label for="{{ form.departamento.id_for_label }}">{{ form.departamento.label }}</label>
+                    {{ form.departamento }}
+                </div>
+                <div class="objetos" style="flex: 1; margin-bottom: 0;">
+                    <label for="{{ form.municipio.id_for_label }}">{{ form.municipio.label }}</label>
+                    {{ form.municipio }}
+                </div>
+            </div>
+
+            <div class="objetos">
+                <label for="{{ form.telefonousuario.id_for_label }}">{{ form.telefonousuario.label }}</label>
+                {{ form.telefonousuario }}
+            </div>
+
+            <button class="btn" type="submit" style="width: 100%;">Registrar Usuario</button>
+            <a href="{% url 'administracion' %}" class="btn" style="background-color: #718096; margin-top: 10px; width: 100%; text-align: center;">Volver al Menú Anterior</a>
+        </form>
+    </div> 
+</body>
+</html>

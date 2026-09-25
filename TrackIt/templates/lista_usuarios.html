@@ -1,0 +1,85 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Gestión de Usuarios - TrackIt</title>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+</head>
+<body>
+    <div class="container contenedor-amplio">
+        <div class="cabecera-login">
+            <h1>TrackIt</h1>
+            <h2>Módulo de Administración</h2>
+            <h3>Directorio de Usuarios Registrados</h3>
+        </div>
+
+        {% if messages %}
+            <div class="mensajes-alerta">
+                {% for message in messages %}
+                    <p class="alerta-exito">{{ message }}</p>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <form method="get" class="form-busqueda-historial">
+            <fieldset class="grupo-fieldset">
+                <legend class="leyenda-fieldset">Buscar Usuario</legend>
+                
+                <div class="fila-doble">
+                    <div class="objetos objeto-mitad">
+                        <label for="busqueda">Cédula, Nombre o Apellido</label>
+                        <input class="TxtCaja" id="busqueda" name="busqueda" type="text" value="{{ busqueda }}" placeholder="Ej: 1088... o Carlos" />
+                    </div>
+
+                    <div class="objetos objeto-mitad" style="display: flex; align-items: flex-end; gap: 10px;">
+                        <button class="btn btn-principal" type="submit">🔍 Buscar</button>
+                        <a href="{% url 'lista_usuarios' %}" class="btn btn-secundario">Limpiar</a>
+                    </div>
+                </div>
+            </fieldset>
+        </form>
+
+        <fieldset class="grupo-fieldset">
+            <legend class="leyenda-fieldset">Usuarios del Sistema</legend>
+            
+            <div class="contenedor-tabla-resumen">
+                <table class="tabla-detalle-entrada">
+                    <thead>
+                        <tr>
+                            <th>Documento</th>
+                            <th>Nombres y Apellidos</th>
+                            <th>Teléfono</th>
+                            <th>Correo Electrónico</th>
+                            <th>Rol</th>
+                            <th>Acción</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for u in usuarios %}
+                            <tr>
+                                <td><strong>{{ u.tipodocumento }} {{ u.numcedula }}</strong></td>
+                                <td>{{ u.nombreusuario1 }} {{ u.nombreusuario2 }} {{ u.apellidousuario1 }} {{ u.apellidousuario2 }}</td>
+                                <td>{{ u.telefonousuario|default:"N/A" }}</td>
+                                <td>{{ u.emailusuario }}</td>
+                                <td>{{ u.fk_codrol.nombrerol }}</td>
+                                <td>
+                                    <a href="{% url 'editar_usuario' u.numcedula %}" class="btn btn-principal" style="padding: 4px 8px; font-size: 12px;">✏️ Editar</a>
+                                </td>
+                            </tr>
+                        {% empty %}
+                            <tr>
+                                <td colspan="6" class="texto-vacio">No se encontraron usuarios registrados.</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </fieldset>
+
+        <div class="contenedor-volver">
+            <a href="{% url 'administracion' %}" class="btn btn-secundario">Volver al Módulo</a>
+        </div>
+    </div>
+</body>
+</html>

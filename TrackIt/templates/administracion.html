@@ -1,0 +1,65 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Módulo de Administración - TrackIt</title>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+</head>
+<body>
+    <div class="admin-container">
+    
+        <aside class="sidebar">
+            <div class="cabecera-login">
+                <h2>TrackIt</h2>
+                <h3>Administración</h3>
+            </div>
+            <ul class="sidebar-menu">
+                <li><a href="{% url 'dashboard' %}">📊 Dashboard General</a></li>
+                <li><a href="{% url 'lista_usuarios' %}" class="active">👥 Gestión de Usuarios</a></li>
+                <li><a href="#">🔐 Control de Accesos</a></li>
+                <li><a href="#">⚙️ Configuración del Sistema</a></li>
+                <li><a href="{% url 'dashboard' %}" class="btn-volver">⬅ Volver al Menú Principal</a></li>
+            </ul>
+        </aside>
+
+        <main class="main-content">
+            <header class="topbar">
+                <h1>Módulo de Administración y Control de Accesos</h1>
+                <span class="user-welcome">Panel de Control</span>
+            </header>
+
+            <section class="content-area">
+                <div class="cards-grid">
+                    <div class="card">
+                        <h3>Usuarios Registrados</h3>
+                        <p>{{ total_usuarios }}</p>
+                    </div>
+                    <div class="card">
+                        <h3>Roles Definidos</h3>
+                        <p>{{ total_roles }}</p>
+                    </div>
+                    <div class="card">
+                        <h3>Permisos de Módulos</h3>
+                        <p>Configurados</p>
+                    </div>
+                </div>
+
+                <div class="action-section">
+                    <h3>Acciones de Administración de Usuarios</h3>
+                    <p>Gestiona las credenciales, altas de usuarios nuevos y la consulta/edición de datos sobre los perfiles del sistema.</p>
+                    
+                    <a href="{% url 'registro_usuario' %}" class="btn">➕ Registrar Nuevo Usuario</a>
+<a href="{% url 'lista_usuarios' %}" class="btn">👥 Ver / Editar Usuarios</a>
+<a href="{% url 'asignar_permisos' %}" class="btn">🔑 Asignar Permisos por Módulo</a>
+                    
+                    <div class="contenedor-volver">
+                        <a href="{% url 'dashboard' %}" class="btn btn-secundario">Volver al Menú Principal</a>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+</body>
+</html>

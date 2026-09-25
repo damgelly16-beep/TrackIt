@@ -1,0 +1,49 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Asignar Permisos y Roles - TrackIt</title>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+</head>
+<body>
+    <div class="container contenedor-amplio">
+        <div class="cabecera-login">
+            <h1>TrackIt</h1>
+            <h2>Módulo de Administración</h2>
+            <h3>🔑 Asignación de Roles y Permisos por Usuario</h3>
+        </div>
+
+        {% if messages %}
+            <div class="mensajes-alerta">
+                {% for message in messages %}
+                    <p class="alerta-exito">{{ message }}</p>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <form method="post" novalidate>
+            {% csrf_token %}
+            
+            <fieldset class="grupo-fieldset">
+                <legend class="leyenda-fieldset">Selección de Usuario y Rol</legend>
+                
+                <div class="fila-doble">
+                    <div class="objetos objeto-mitad">
+                        <label for="{{ form.numCedula.id_for_label }}">{{ form.numCedula.label }}</label>
+                        {{ form.numCedula }}
+                    </div>
+
+                    <div class="objetos objeto-mitad">
+                        <label for="{{ form.codRol.id_for_label }}">{{ form.codRol.label }}</label>
+                        {{ form.codRol }}
+                    </div>
+                </div>
+            </fieldset>
+
+            <button class="btn btn-principal" type="submit">Guardar Asignación de Permisos</button>
+            <a href="{% url 'administracion' %}" class="btn btn-secundario">Cancelar</a>
+        </form>
+    </div>
+</body>
+</html>

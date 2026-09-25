@@ -1,0 +1,53 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Módulo de Ventas - TrackIt</title>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+</head>
+<body>
+    <div class="container contenedor-modulo">
+        <div class="cabecera-login">
+            <h1>TrackIt</h1>
+            <h2>Módulo de Gestion de Ventas</h2>
+        </div>
+
+        {% if messages %}
+            <div class="mensajes-alerta">
+                {% for message in messages %}
+                    <p class="alerta-exito">{{ message }}</p>
+                {% endfor %}
+            </div>
+        {% endif %}
+        
+        <div class="objetos panel-control">
+            <h3>Panel de Control de Ventas</h3>
+            <p class="texto-descripcion">Selecciona la operación que deseas realizar:</p>
+            
+            <div class="contenedor-tarjetas">
+                <a href="{% url 'registrar_venta' %}" class="btn tarjeta-opcion">
+                    🧾 <strong>Nueva Factura de Venta</strong><br>
+                    <span class="subtexto-tarjeta">Facturar artículos y descontar stock</span>
+                </a>
+
+                <a href="{% url 'directorio_clientes' %}" class="btn tarjeta-opcion">
+    👤 <strong>Directorio de Clientes</strong><br>
+    <span class="subtexto-tarjeta">Gestión y consulta de datos de clientes</span>
+</a>
+                
+               <a href="{% url 'reporte_ventas' %}" class="btn tarjeta-opcion">
+    📊 <strong>Reporte de Ventas</strong><br>
+    <span class="subtexto-tarjeta">Cierre diario, mensual y métodos de pago</span>
+</a>
+            </div>
+        </div>
+
+        <div class="contenedor-volver">
+            <a href="{% url 'dashboard' %}" class="btn boton-volver">
+                Volver al Menú Principal
+            </a>
+        </div>
+    </div>
+</body>
+</html>

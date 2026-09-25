@@ -1,0 +1,71 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Directorio de Clientes - TrackIt</title>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+</head>
+<body>
+    <div class="container contenedor-amplio">
+        <div class="cabecera-login">
+            <h1>TrackIt</h1>
+            <h2>Módulo de Ventas</h2>
+            <h3>Directorio de Clientes</h3>
+        </div>
+
+        <form method="get" class="form-busqueda-historial">
+            <fieldset class="grupo-fieldset">
+                <legend class="leyenda-fieldset">Consultar Cliente</legend>
+                
+                <div class="fila-doble">
+                    <div class="objetos objeto-mitad">
+                        <label for="{{ form.busqueda.id_for_label }}">{{ form.busqueda.label }}</label>
+                        {{ form.busqueda }}
+                    </div>
+
+                    <div class="objetos objeto-mitad" style="display: flex; align-items: flex-end; gap: 10px;">
+                        <button class="btn btn-principal" type="submit">🔍 Buscar</button>
+                        <a href="{% url 'directorio_clientes' %}" class="btn btn-secundario">Limpiar</a>
+                    </div>
+                </div>
+            </fieldset>
+        </form>
+
+        <fieldset class="grupo-fieldset">
+            <legend class="leyenda-fieldset">Listado de Clientes Registrados</legend>
+            
+            <div class="contenedor-tabla-resumen">
+                <table class="tabla-detalle-entrada">
+                    <thead>
+                        <tr>
+                            <th>Nombre del Cliente</th>
+                            <th>Cédula / Documento</th>
+                            <th>Último Método de Pago</th>
+                            <th>Facturas Emitidas</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in clientes %}
+                            <tr>
+                                <td><strong>{{ item.nombre }}</strong></td>
+                                <td>{{ item.cedula }}</td>
+                                <td>{{ item.ultimo_pago }}</td>
+                                <td>{{ item.total_compras }}</td>
+                            </tr>
+                        {% empty %}
+                            <tr>
+                                <td colspan="4" class="texto-vacio">No se encontraron clientes registrados en el historial de ventas.</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </fieldset>
+
+        <div class="contenedor-volver">
+            <a href="{% url 'ventas_modulo' %}" class="btn btn-secundario">Volver al Módulo</a>
+        </div>
+    </div>
+</body>
+</html>

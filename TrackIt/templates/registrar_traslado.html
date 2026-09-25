@@ -1,0 +1,59 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Traslado de Inventario - TrackIt</title>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+</head>
+<body>
+    <div class="container contenedor-amplio">
+        <div class="cabecera-login">
+            <h1>TrackIt</h1>
+            <h2>Módulo de Inventario</h2>
+            <h3>Traslado de Mercancía</h3>
+        </div>
+
+        {% if messages %}
+            <div class="mensajes-alerta">
+                {% for message in messages %}
+                    <p class="alerta-exito">{{ message }}</p>
+                {% endfor %}
+            </div>
+        {% endif %}
+        
+        <form method="post" novalidate>
+            {% csrf_token %}
+            
+            <fieldset class="grupo-fieldset">
+                <legend class="leyenda-fieldset">Movimiento de Existencias entre Ubicaciones</legend>
+                
+                <div class="objetos">
+                    <label for="{{ form.productoId.id_for_label }}">{{ form.productoId.label }}</label>
+                    {{ form.productoId }}
+                </div>
+
+                <div class="fila-doble">
+                    <div class="objetos objeto-mitad">
+                        <label for="{{ form.ubicacionOrigen.id_for_label }}">{{ form.ubicacionOrigen.label }}</label>
+                        {{ form.ubicacionOrigen }}
+                    </div>
+
+                    <div class="objetos objeto-mitad">
+                        <label for="{{ form.ubicacionDestino.id_for_label }}">{{ form.ubicacionDestino.label }}</label>
+                        {{ form.ubicacionDestino }}
+                    </div>
+                </div>
+
+                <div class="objetos sin-margen">
+                    <label for="{{ form.cantidadTraslado.id_for_label }}">{{ form.cantidadTraslado.label }}</label>
+                    {{ form.cantidadTraslado }}
+                </div>
+            </fieldset>
+
+            <button class="btn btn-principal" type="submit">Confirmar Traslado</button>
+            <a href="{% url 'inventario_modulo' %}" class="btn btn-secundario">Volver al Módulo</a>
+        </form>
+    </div>
+</body>
+</html>

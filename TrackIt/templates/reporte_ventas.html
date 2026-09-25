@@ -1,0 +1,121 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+<title>Reporte de Ventas y Cierres - TrackIt</title>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+</head>
+<body>
+    <div class="container contenedor-amplio">
+        <div class="cabecera-login">
+            <h1>TrackIt</h1>
+            <h2>Módulo de Ventas</h2>
+            <h3>Reporte de Cierre de Caja (Diario / Mensual)</h3>
+        </div>
+
+        <form method="get" class="form-busqueda-historial">
+            <fieldset class="grupo-fieldset">
+                <legend class="leyenda-fieldset">Filtro de Cierre</legend>
+                
+                <div class="fila-doble">
+                    <div class="objetos objeto-mitad">
+                     <label for="tipoCierre">Periodo de Cierre</label>
+                    <select class="TxtCaja" id="tipoCierre" name="tipoCierre">
+                    <option value="diario" {% if tipo_cierre == 'diario' %}selected{% endif %}>Cierre Diario</option>
+                    <option value="mensual" {% if tipo_cierre == 'mensual' %}selected{% endif %}>Cierre Mensual</option>
+                    </select>
+                </div>
+  <div class="objetos objeto-mitad">
+                     <label for="fechaFiltro">Fecha de Consulta</label>
+                   <input class="TxtCaja" id="fechaFiltro" name="fechaFiltro" type="date" value="{{ fecha_filtro }}" />
+                    </div>
+                </div>
+
+     <button class="btn btn-principal" type="submit">📊 Generar Cierre</button>
+            </fieldset>
+        </form>
+
+        <fieldset class="grupo-fieldset">
+            <legend class="leyenda-fieldset">Resumen de Ventas Generales</legend>
+            
+ <div class="cards-grid">
+          <div class="card">
+              <h3>Total Recaudado</h3>
+          <p style="color: #2b6cb0;">${{ total_recaudado|floatformat:2 }}</p>
+       </div>
+<div class="card">
+               <h3>Facturas Emitidas</h3>
+               <p>{{ total_facturas }}</p>
+            </div>
+          <div class="card">
+                    <h3>Unidades Vendidas</h3>
+                    <p>{{ total_unidades }}</p>
+                </div>
+            </div>
+        </fieldset>
+
+        <fieldset class="grupo-fieldset">
+            <legend class="leyenda-fieldset">Desglose por Método de Pago</legend>
+            
+            <div class="contenedor-tabla-resumen">
+                <table class="tabla-detalle-entrada">
+                    <thead>
+         <tr>
+               <th>Método de Pago</th>
+                       <th>Total Recaudado</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for metodo, valor in metodos_pago.items %}
+                            <tr>
+                          <td><strong>{{ metodo }}</strong></td>
+                        <td>${{ valor|floatformat:2 }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </fieldset>
+
+        <fieldset class="grupo-fieldset">
+            <legend class="leyenda-fieldset">Detalle de Transacciones del Cierre</legend>
+            
+            <div class="contenedor-tabla-resumen">
+                <table class="tabla-detalle-entrada">
+                    <thead>
+                        <tr>
+                            <th>N° Factura</th>
+                            <th>Cliente</th>
+                            <th>Método Pago</th>
+                            <th>Cant.</th>
+                            <th>Precio Unit.</th>
+                            <th>Subtotal</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for v in ventas_detalle %}
+                            <tr>
+           <td><strong>{{ v.factura }}</strong></td>
+             <td>{{ v.cliente }}</td>
+             <td>{{ v.metodo_pago }}</td>
+            <td>{{ v.cantidad }}</td>
+             <td>${{ v.precio_unitario }}</td>
+            <td>${{ v.total|floatformat:2 }}</td>
+              </tr>
+            {% empty %}
+           <tr>
+                               <td colspan="6" class="texto-vacio">No hay registros de ventas para la fecha seleccionada.</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </fieldset>
+
+        <div class="contenedor-volver">
+            <a href="{% url 'ventas_modulo' %}" class="btn btn-secundario">Volver al Módulo</a>
+        </ div>
+    </div>
+</body>
+</html>

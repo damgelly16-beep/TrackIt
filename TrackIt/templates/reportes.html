@@ -1,0 +1,216 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Módulo de Reportes - TrackIt</title>
+<link rel="stylesheet" href="{% static 'css/styles.css' %}">
+</head>
+<body>
+    <div class="container contenedor-amplio">
+        <div class="cabecera-login">
+            <h1>TrackIt</h1>
+            <h2>Módulo de Analítica y Reportes Generales</h2>
+        </div>
+
+        <form method="get" class="form-busqueda-historial">
+            <fieldset class="grupo-fieldset">
+                <legend class="leyenda-fieldset">Seleccionar Tipo de Reporte</legend>
+                
+     <div class="fila-doble">
+       <div class="objetos objeto-mitad">
+        <label for="tipo">Tipo de Informe</label>
+         <select class="TxtCaja" id="tipo" name="tipo" onchange="this.form.submit()">
+         <option value="inventario" {% if tipo_reporte == 'inventario' %}selected{% endif %}>📦 Inventario Valorizado</option>
+        <option value="movimientos" {% if tipo_reporte == 'movimientos' %}selected{% endif %}>🔄 Movimientos y Kárdex</option>
+         <option value="compras" {% if tipo_reporte == 'compras' %}selected{% endif %}>🛒 Compras por Proveedor</option>
+         <option value="ventas" {% if tipo_reporte == 'ventas' %}selected{% endif %}>💰 Rendimiento de Ventas</option>
+    </select>
+    </div>
+      <div class="objetos objeto-mitad" style="display: flex; align-items: flex-end;">
+              <button class="btn btn-principal" type="submit">📊 Cargar Reporte</button>
+      </div>
+    </div>
+    </fieldset>
+    </form>
+        {% if tipo_reporte == 'inventario' %}
+            <fieldset class="grupo-fieldset">
+            <legend class="leyenda-fieldset">Resumen de Valorización</legend>
+            <div class="cards-grid">
+             <div class="card">
+               <h3>Stock Total Existente</h3>
+               <p>{{ total_unidades_inv }} Und</p>
+                </div>
+                 <div class="card">
+                  <h3>Valor Invertido (Costo)</h3>
+                   <p style="color: #2b6cb0;">${{ total_costo_inv|floatformat:2 }}</p>
+                 </div>
+                    <div class="card">
+                   <h3>Valor Proyectado Venta</h3>
+                   <p style="color: #2b6cb0;">${{ total_valor_venta_inv|floatformat:2 }}</p>
+               </div>
+           </div>
+   </fieldset>
+ <fieldset class="grupo-fieldset">
+      <legend class="leyenda-fieldset">Detalle de Inventario por Producto</legend>
+          <div class="contenedor-tabla-resumen">
+     <table class="tabla-detalle-entrada">
+             <thead>
+              <tr>
+     <th>Producto</th>
+      <th>Categoría</th>
+       <th>Stock</th>
+       <th>Costo Unit.</th>
+         <th>Costo Total</th>
+        <th>Precio Venta</th>
+      <th>Valor Venta Total</th>
+     </tr>
+      </thead>
+ <tbody>
+         {% for item in reporte_inventario %}
+                  <tr>
+                       <td><strong>{{ item.producto }}</strong></td>
+                        <td>{{ item.categoria }}</td>
+                        <td>{{ item.stock }}</td>
+                        <td>${{ item.costo_unitario }}</td>
+                         <td>${{ item.costo_total|floatformat:2 }}</td>
+                        <td>${{ item.precio_venta }}</td>
+                       <td>${{ item.valor_venta_total|floatformat:2 }}</td>
+         </tr>
+       {% empty %}
+            <tr>
+             <td colspan="7" class="texto-vacio">No hay datos de productos en inventario.</td>
+               </tr>
+              {% endfor %}
+               </tbody>
+                </table>
+                </div>
+            </fieldset>
+        {% endif %}
+        {% if tipo_reporte == 'movimientos' %}
+            <fieldset class="grupo-fieldset">
+                <legend class="leyenda-fieldset">Histórico General de Movimientos (Kárdex)</legend>
+                <div class="contenedor-tabla-resumen">
+                    <table class="tabla-detalle-entrada">
+                        <thead>
+                            <tr>
+                                <th>ID Mov.</th>
+                                <th>Producto</th>
+                                <th>Cantidad</th>
+                                <th>Detalle del Movimiento / Lote</th>
+                                <th>Fecha Vencimiento</th>
+                            </tr>
+                  </thead>
+              <tbody>
+                    {% for item in reporte_movimientos %}
+                   <tr>
+                                    <td>#{{ item.id }}</td>
+                                    <td><strong>{{ item.producto }}</strong></td>
+                                    <td>{{ item.cantidad }}</td>
+                                    <td>{{ item.detalle_lote }}</td>
+                                    <td>{{ item.fecha_vencimiento }}</td>
+                                </tr>
+                            {% empty %}
+                                <tr>
+                   <td colspan="5" class="texto-vacio">No hay movimientos registrados.</td>
+                     </tr>
+                 {% endfor %}
+             </tbody>
+            </table>
+                </div>
+            </fieldset>
+        {% endif %}
+        {% if tipo_reporte == 'compras' %}
+            <fieldset class="grupo-fieldset">
+                <legend class="leyenda-fieldset">Gasto Total en Compras</legend>
+                <div class="cards-grid">
+                 <div class="card">
+                    <h3>Total Invertido en Compras</h3>
+                     <p style="color: #2b6cb0;">${{ total_compras_dinero|floatformat:2 }}</p>
+                    </div>
+                </div>
+            </fieldset>
+
+            <fieldset class="grupo-fieldset">
+                <legend class="leyenda-fieldset">Consolidado por Proveedor</legend>
+                <div class="contenedor-tabla-resumen">
+                    <table class="tabla-detalle-entrada">
+                        <thead>
+                            <tr>
+                                <th>Proveedor</th>
+                                <th>Facturas Recibidas</th>
+                                <th>Unidades Compradas</th>
+                                <th>Total Gasto ($)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in reporte_compras %}
+                                <tr>
+                                    <td><strong>{{ item.proveedor }}</strong></td>
+                                    <td>{{ item.total_facturas }}</td>
+                                    <td>{{ item.total_unidades }}</td>
+                                    <td>${{ item.total_gasto|floatformat:2 }}</td>
+                                </tr>
+                            {% empty %}
+                                <tr>
+                                    <td colspan="4" class="texto-vacio">No hay registros de compras por proveedor.</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </fieldset>
+        {% endif %}
+
+        {% if tipo_reporte == 'ventas' %}
+            <fieldset class="grupo-fieldset">
+                <legend class="leyenda-fieldset">Total Ingresos por Ventas</legend>
+                <div class="cards-grid">
+                    <div class="card">
+                        <h3>Total Facturado</h3>
+                        <p style="color: #2b6cb0;">${{ total_ventas_dinero|floatformat:2 }}</p>
+                    </div>
+                </div>
+            </fieldset>
+
+            <fieldset class="grupo-fieldset">
+                <legend class="leyenda-fieldset">Detalle General de Facturación</legend>
+                <div class="contenedor-tabla-resumen">
+                    <table class="tabla-detalle-entrada">
+                        <thead>
+                            <tr>
+                                <th>N° Factura</th>
+                                <th>Cliente</th>
+                                <th>Método de Pago</th>
+                                <th>Cantidad</th>
+                                <th>Precio Unit.</th>
+                                <th>Subtotal</th>
+                            </tr>
+                        </thead>
+     <tbody>
+     {% for item in reporte_ventas %}
+<tr>
+        <td><strong>{{ item.factura }}</strong></td>
+       <td>{{ item.cliente }}</td>
+         <td>{{ item.metodo_pago }}</td>
+        <td>{{ item.cantidad }}</td>
+        <td>${{ item.precio_unitario }}</td>
+          <td>${{ item.total|floatformat:2 }}</td>
+         </tr>
+     {% empty %}
+   <tr>
+     <td colspan="6" class="texto-vacio">No hay registros de ventas.</td>
+      </tr>
+        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </fieldset>
+        {% endif %}
+
+        <div class="contenedor-volver">
+            <a href="{% url 'dashboard' %}" class="btn btn-secundario">Volver al Menú Principal</a>
+        </div>
+    </div>
+</body>
+</html>

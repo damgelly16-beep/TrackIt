@@ -1,0 +1,39 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Módulo de Compras - TrackIt</title>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+</head>
+<body>
+    <div class="container">
+        <div class="cabecera-login">
+            <h1>TrackIt</h1>
+            <h2>Módulo de Gestión de Compras</h2>
+            <p>Selecciona la operación a realizar en el sistema</p>
+        </div>
+        {% if messages %}
+            <div class="mensajes-alerta">
+                {% for message in messages %}
+                    <p class="alerta-exito">{{ message }}</p>
+                {% endfor %}
+            </div>
+        {% endif %}
+          <div class="menu-modulos">
+            <a href="{% url 'entrada_mercancia' %}" class="btn btn-principal btn-modulo">
+                📥 Registrar Entrada de Mercancía
+            </a>
+            <a href="{% url 'gestion_proveedores' %}" class="btn btn-principal btn-modulo">
+                🤝 Gestión y Registro de Proveedores
+            </a>
+            <a href="{% url 'historial_compras' %}" class="btn btn-principal btn-modulo">
+                📋 Historial de Compras e Ingresos
+            </a>
+            <a href="{% url 'dashboard' %}" class="btn btn-secundario btn-modulo">
+                ⬅ Volver al Menú Principal
+            </a>
+        </div>
+    </div>
+</body>
+</html>

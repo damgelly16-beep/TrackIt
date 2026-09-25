@@ -1,0 +1,75 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Gestión de Proveedores - TrackIt</title>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+</head>
+<body>
+    <div class="container contenedor-amplio">
+        <div class="cabecera-login">
+            <h1>TrackIt</h1>
+            <h2>Módulo de Compras</h2>
+            <h3>Registro de Proveedores</h3>
+        </div>
+
+        {% if messages %}
+            <div class="mensajes-alerta">
+                {% for message in messages %}
+                    <p class="alerta-exito">{{ message }}</p>
+                {% endfor %}
+            </div>
+        {% endif %}
+        
+        <form method="post" novalidate>
+            {% csrf_token %}
+            
+            <fieldset class="grupo-fieldset">
+                <legend class="leyenda-fieldset">1. Identificación de la Empresa</legend>
+                
+                <div class="fila-doble">
+                    <div class="objetos objeto-mitad">
+                        <label for="{{ form.nitproveedor.id_for_label }}">{{ form.nitproveedor.label }}</label>
+                        {{ form.nitproveedor }}
+                    </div>
+
+                    <div class="objetos objeto-mitad">
+                        <label for="{{ form.nombreproveedor.id_for_label }}">{{ form.nombreproveedor.label }}</label>
+                        {{ form.nombreproveedor }}
+                    </div>
+                </div>
+
+                <div class="objetos sin-margen">
+                    <label for="{{ form.contacto_nombre.id_for_label }}">{{ form.contacto_nombre.label }}</label>
+                    {{ form.contacto_nombre }}
+                </div>
+            </fieldset>
+
+            <fieldset class="grupo-fieldset">
+                <legend class="leyenda-fieldset">2. Datos de Contacto y Ubicación</legend>
+
+                <div class="fila-doble">
+                    <div class="objetos objeto-mitad">
+                        <label for="{{ form.telefonoproveedor.id_for_label }}">{{ form.telefonoproveedor.label }}</label>
+                        {{ form.telefonoproveedor }}
+                    </div>
+
+                    <div class="objetos objeto-mitad">
+                        <label for="{{ form.emailproveedor.id_for_label }}">{{ form.emailproveedor.label }}</label>
+                        {{ form.emailproveedor }}
+                    </div>
+                </div>
+
+                <div class="objetos sin-margen">
+                    <label for="{{ form.direccionproveedor.id_for_label }}">{{ form.direccionproveedor.label }}</label>
+                    {{ form.direccionproveedor }}
+                </div>
+            </fieldset>
+
+            <button class="btn btn-principal" type="submit">Guardar Proveedor</button>
+            <a href="{% url 'compras_modulo' %}" class="btn btn-secundario">Volver al Módulo</a>
+        </form>
+    </div>
+</body>
+</html>

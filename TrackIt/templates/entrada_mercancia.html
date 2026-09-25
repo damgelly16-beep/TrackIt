@@ -1,0 +1,201 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Entrada de Mercancía - TrackIt</title>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+</head>
+<body>
+    <div class="container contenedor-amplio">
+        <div class="cabecera-login">
+            <h1>TrackIt</h1>
+            <h2>Módulo de Compras</h2>
+            <h3>Registro de Entrada con IVA</h3>
+        </div>
+
+        {% if messages %}
+            <div class="mensajes-alerta">
+                {% for message in messages %}
+                    <p class="alerta-exito">{{ message }}</p>
+                {% endfor %}
+            </div>
+        {% endif %}
+        
+        <form method="post" id="formEntrada">
+            {% csrf_token %}
+            <input type="hidden" name="detallesProductosJson" id="detallesProductosJson" value="[]">
+            
+            <fieldset class="grupo-fieldset">
+                <legend class="leyenda-fieldset">1. Datos de la Factura y Proveedor</legend>
+                
+                <div class="fila-doble">
+                    <div class="objetos objeto-mitad">
+                        <label for="numeroFactura">Número de Factura</label>
+                        <input class="TxtCaja" id="numeroFactura" name="numeroFactura" type="text" placeholder="Ej: FAC-00123" required />
+                    </div>
+
+                    <div class="objetos objeto-mitad">
+                        <label for="proveedorNombre">Nombre del Proveedor</label>
+                        <input class="TxtCaja" id="proveedorNombre" name="proveedorNombre" type="text" placeholder="Ej: Distribuidora Veterinaria S.A.S." required />
+                    </div>
+                </div>
+
+                <div class="objetos sin-margen">
+                    <label for="fechaIngreso">Fecha de Ingreso</label>
+                    <input class="TxtCaja" id="fechaIngreso" name="fechaIngreso" type="date" required />
+                </div>
+            </fieldset>
+
+            <fieldset class="grupo-fieldset">
+                <legend class="leyenda-fieldset">2. Agregar Productos</legend>
+                
+                <div class="objetos">
+                    <label for="tempProducto">Seleccionar Producto</label>
+                    <select class="TxtCaja" id="tempProducto">
+                        <option value="">-- Seleccione un producto --</option>
+                        {% for prod in productos %}
+                            <option value="{{ prod.pk }}">{{ prod.nombreproducto }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="fila-doble">
+                    <div class="objetos objeto-tercio">
+                        <label for="tempCantidad">Cantidad</label>
+                        <input class="TxtCaja" id="tempCantidad" type="number" step="0.01" placeholder="0.00" />
+                    </div>
+
+                    <div class="objetos objeto-tercio">
+                        <label for="tempCosto">Costo Base</label>
+                        <input class="TxtCaja" id="tempCosto" type="number" step="0.01" placeholder="0.00" />
+                    </div>
+
+                    <div class="objetos objeto-tercio">
+                        <label for="tempIva">% IVA</label>
+                        <select class="TxtCaja" id="tempIva">
+                            <option value="0">0% (Exento)</option>
+                            <option value="5">5%</option>
+                            <option value="19" selected>19%</option>
+                        </select>
+                    </div>
+                </div>
+
+                <button class="btn btn-principal" type="button" onclick="agregarProductoLista()">➕ Agregar Item</button>
+            </fieldset>
+
+            <fieldset class="grupo-fieldset">
+                <legend class="leyenda-fieldset">3. Resumen y Cálculo de Impuestos</legend>
+                
+                <div class="contenedor-tabla-resumen">
+                    <table class="tabla-detalle-entrada">
+                        <thead>
+                            <tr>
+                                <th>Producto</th>
+                                <th>Cant.</th>
+                                <th>Costo Base</th>
+                                <th>IVA (%)</th>
+                                <th>Total Item</th>
+                                <th>Acción</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tablaDetalleBody">
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="resumen-totales-factura">
+                    <p><strong>Subtotal Net:</strong> $<span id="lblSubtotal">0.00</span></p>
+                    <p><strong>Total IVA:</strong> $<span id="lblIva">0.00</span></p>
+                    <p class="total-destacado"><strong>Total Factura:</strong> $<span id="lblTotal">0.00</span></p>
+                </div>
+            </fieldset>
+
+            <button class="btn btn-principal" type="submit">Guardar Entrada Completa</button>
+            <a href="{% url 'compras_modulo' %}" class="btn btn-secundario">Volver al Módulo</a>
+        </form>
+    </div>
+
+    <script>
+        let itemsEntrada = [];
+
+        function agregarProductoLista() {
+            const selectProd = document.getElementById('tempProducto');
+            const prodId = selectProd.value;
+            const prodNombre = selectProd.options[selectProd.selectedIndex].text;
+            const cantidad = document.getElementById('tempCantidad').value;
+            const costo = document.getElementById('tempCosto').value;
+            const iva = document.getElementById('tempIva').value;
+
+            if (!prodId || !cantidad || parseFloat(cantidad) <= 0 || !costo) {
+                alert('Por favor complete el producto, cantidad válida y costo base.');
+                return;
+            }
+
+            itemsEntrada.push({
+                productoId: prodId,
+                nombre: prodNombre,
+                cantidad: parseFloat(cantidad),
+                costo: parseFloat(costo),
+                iva: parseFloat(iva)
+            });
+
+            document.getElementById('tempProducto').value = '';
+            document.getElementById('tempCantidad').value = '';
+            document.getElementById('tempCosto').value = '';
+
+            renderTabla();
+        }
+
+        function eliminarProductoLista(index) {
+            itemsEntrada.splice(index, 1);
+            renderTabla();
+        }
+
+        function renderTabla() {
+            const tbody = document.getElementById('tablaDetalleBody');
+            tbody.innerHTML = '';
+
+            let subtotalGen = 0;
+            let ivaGen = 0;
+
+            itemsEntrada.forEach((item, index) => {
+                const subtotalItem = item.cantidad * item.costo;
+                const valorIvaItem = subtotalItem * (item.iva / 100);
+                const totalItem = subtotalItem + valorIvaItem;
+
+                subtotalGen += subtotalItem;
+                ivaGen += valorIvaItem;
+
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${item.nombre}</td>
+                    <td>${item.cantidad}</td>
+                    <td>$${item.costo.toFixed(2)}</td>
+                    <td>${item.iva}%</td>
+                    <td>$${totalItem.toFixed(2)}</td>
+                    <td>
+                        <button type="button" class="btn-eliminar-fila" onclick="eliminarProductoLista(${index})">❌</button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+            const totalGen = subtotalGen + ivaGen;
+
+            document.getElementById('lblSubtotal').innerText = subtotalGen.toFixed(2);
+            document.getElementById('lblIva').innerText = ivaGen.toFixed(2);
+            document.getElementById('lblTotal').innerText = totalGen.toFixed(2);
+
+            document.getElementById('detallesProductosJson').value = JSON.stringify(itemsEntrada);
+        }
+
+        document.getElementById('formEntrada').addEventListener('submit', function(e) {
+            if (itemsEntrada.length === 0) {
+                e.preventDefault();
+                alert('Debe agregar al menos un producto a la lista antes de guardar.');
+            }
+        });
+    </script>
+</body>
+</html>

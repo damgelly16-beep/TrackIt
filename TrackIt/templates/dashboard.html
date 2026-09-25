@@ -1,0 +1,58 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard - TrackIt</title>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+</head>
+<body style="display: flex; flex-direction: column; min-height: 100vh;">
+
+    <header class="menu-principal">
+        <div class="logo-box">
+            <h1>TrackIt</h1>
+        </div>
+        <div class="enlaces-menu">
+            <span style="font-weight: 600; color: #1A5276;">Usuario: {{ request.session.usuario_logged }}</span>
+        </div>
+    </header>
+
+    <!-- Usamos flexbox en línea aquí para centrar el contenido principal vertical y horizontalmente -->
+    <main class="contenedor-amplio" style="margin: auto; width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+        
+        <h2>Bienvenido al Sistema Central</h2>
+        
+        <section class="grid-panel" style="width: 100%; justify-content: center;">
+            <a href="{% url 'inventario_modulo' %}" class="card-menu">
+            <div class="icono">📦</div>
+            <p>Inventario</p>
+            </a>
+            
+            <a href="{% url 'compras_modulo' %}" class="card-menu">
+            <div class="icono">🛒</div>
+            <p>Compras</p>
+            </a>
+            
+            <a href="{% url 'ventas_modulo' %}" class="card-menu">
+            <div class="icono">💰</div>
+            <p>Ventas</p>
+            </a>
+            
+            <a href="{% url 'reportes_general' %}" class="card-menu">
+             <div class="icono">📊</div>
+             <p>Reportes</p>    
+            </a>      
+
+            <a href="{% url 'administracion' %}" class="card-menu">
+            <div class="icono">⚙️</div>
+            <p>Administración</p>
+            </a>
+        </section>
+
+        <nav style="margin-top: 20px;">
+        <a href="{% url 'logout' %}" class="btn" style="background-color: #e53e3e; color: white;">🚪 Cerrar Sesión</a>
+        </nav>
+    </main>
+
+</body>
+</html>
