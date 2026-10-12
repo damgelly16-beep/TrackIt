@@ -5,6 +5,8 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.contrib.auth.models import User
 from django.db.models import Sum, Q
+from django.http import JsonResponse
+from .models import Productos
 
 # imports de modelos y formularios del proyecto
 from .models import Usuario, Rol, Productos, Grupo, Inventario, Inventarioproducto, Proveedor
@@ -885,3 +887,9 @@ def consultar_producto_view(request):
         'producto_info': producto_info,
         'busqueda': busqueda
     })
+def api_productos(request):
+    if request.method == 'GET':
+        
+        productos = list(Productos.objects.values('codproducto', 'nombreproducto', 'descripcionproducto'))
+        return JsonResponse(productos, safe=False)
+    

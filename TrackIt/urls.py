@@ -32,4 +32,5 @@ urlpatterns = [
     path('ventas/reporte/', views.reporte_ventas_view, name='reporte_ventas'),
    
     path('reportes/', views.reportes_general_view, name='reportes_general'),
+    path('api/productos/', views.api_productos, name='api_productos'),
 ]
