@@ -43,43 +43,41 @@ def inicio(request):
     return render(request, 'index.html')
 
 # autenticacion de usuario
+# autenticacion de usuario a prueba de fallos
 def login_view(request):
+    # Si ya tiene sesión, entra directo
+    if request.session.get('usuario_logged'):
+        return redirect('dashboard')
+
     if request.method == 'POST':
-        form = LoginForm(request.POST)
-        if form.is_valid():
-            usuario = form.cleaned_data['TxtUsuario'].strip()
-            password = form.cleaned_data['TxtPassword'].strip()
+        # Leemos los datos directamente del navegador
+        usuario = request.POST.get('TxtUsuario', '').strip()
+        password = request.POST.get('TxtPassword', '').strip()
 
-            # admin por defecto
-            if usuario == 'admin' and password == '1234':
-                request.session['usuario_logged'] = 'admin'
-                request.session['rol'] = 'Administrador'
-                messages.success(request, '¡Ingreso correcto como Administrador!')
-                return redirect('dashboard')
+        # Validación del administrador
+        if usuario == 'admin' and password == '1234':
+            request.session['usuario_logged'] = 'admin'
+            request.session['rol'] = 'Administrador'
+            request.session.modified = True  # <- ESTA LÍNEA ES LA QUE EVITA EL REBOTE
+            return redirect('dashboard')
 
-            user_django = User.objects.filter(username=usuario).first()
-            if user_django and user_django.check_password(password):
-                request.session['usuario_logged'] = user_django.username
+        # Validación para usuarios en base de datos
+        user_django = User.objects.filter(username=usuario).first()
+        if user_django and user_django.check_password(password):
+            request.session['usuario_logged'] = user_django.username
+            try:
+                perfil = Usuario.objects.filter(numcedula=user_django.username).first()
+                request.session['rol'] = perfil.fk_codrol.nombrerol if perfil else 'Usuario'
+            except Exception:
+                request.session['rol'] = 'Usuario'
                 
-                try:
-                    perfil = Usuario.objects.filter(Q(numcedula=user_django.username) | Q(emailusuario=user_django.email)).first()
-                    if perfil and perfil.fk_codrol:
-                        request.session['rol'] = perfil.fk_codrol.nombrerol
-                    else:
-                        request.session['rol'] = None
-                except Exception:
-                    request.session['rol'] = None
+            request.session.modified = True  # <- ESTA LÍNEA ES LA QUE EVITA EL REBOTE
+            return redirect('dashboard')
+            
+        messages.error(request, 'Usuario o contraseña incorrectos.')
 
-                messages.success(request, f'¡Bienvenido {user_django.first_name}!')
-                return redirect('dashboard')
-            else:
-                messages.error(request, 'Usuario o contraseña incorrectos.')
-        else:
-            messages.error(request, 'Por favor, completa todos los campos correctamente.')
-    else:
-        form = LoginForm()
+    form = LoginForm()
     return render(request, 'Login.html', {'form': form})
-
 def logout_view(request):
     request.session.flush()
     messages.success(request, 'Has cerrado sesión correctamente.')
@@ -891,5 +889,4 @@ def api_productos(request):
     if request.method == 'GET':
         
         productos = list(Productos.objects.values('codproducto', 'nombreproducto', 'descripcionproducto'))
-        return JsonResponse(productos, safe=False)
-    
+        return JsonResponse(productos, safe=False)    
